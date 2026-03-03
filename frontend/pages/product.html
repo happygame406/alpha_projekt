@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товар - Маркетплейс</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Маркетплейс</h1>
+            <a href="../index.html" class="back-button">На главную</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loading" class="loading">Загрузка...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="productDetail" class="product-detail" style="display: none;">
+            <h1 id="productTitle"></h1>
+            <div id="productPrice" class="price"></div>
+            <div id="productDescription" class="description"></div>
+        </div>
+
+        <div class="recommendations">
+            <h2>Рекомендуемые товары</h2>
+            <div id="recommendations" class="products-grid"></div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        async function loadProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            try {
+                // Загружаем товар
+                const productResponse = await fetch(`${API_URL}/items/${productId}`);
+                if (!productResponse.ok) throw new Error('Товар не найден');
+                const product = await productResponse.json();
+                
+                // Добавляем случайную цену
+                product.price = Math.floor(Math.random() * 10000) + 500;
+                
+                displayProduct(product);
+
+                // Загружаем рекомендации (другие товары)
+                const itemsResponse = await fetch(`${API_URL}/items/?limit=4`);
+                const itemsData = await itemsResponse.json();
+                const recommendations = itemsData.data.filter(i => i.id !== productId).slice(0, 4);
+                displayRecommendations(recommendations);
+
+                document.getElementById('loading').style.display = 'none';
+            } catch (err) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Ошибка загрузки товара';
+            }
+        }
+
+        function displayProduct(product) {
+            document.getElementById('productDetail').style.display = 'block';
+            document.getElementById('productTitle').textContent = product.title;
+            document.getElementById('productPrice').textContent = `${product.price} ₽`;
+            document.getElementById('productDescription').textContent = 
+                product.description || 'Описание отсутствует';
+        }
+
+        function displayRecommendations(products) {
+            const recsEl = document.getElementById('recommendations');
+            
+            if (products.length === 0) {
+                recsEl.innerHTML = '<p>Нет рекомендаций</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                product.price = Math.floor(Math.random() * 10000) + 500;
+                
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.onclick = () => window.location.href = `product.html?id=${product.id}`;
+                card.innerHTML = `
+                    <h3>${product.title}</h3>
+                    <div class="price">${product.price} ₽</div>
+                    <div class="description">${product.description || 'Нет описания'}</div>
+                `;
+                recsEl.appendChild(card);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProduct);
+    </script>
+</body>
+</html>

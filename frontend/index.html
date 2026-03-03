@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Маркетплейс</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Маркетплейс</h1>
+            <div class="auth-buttons">
+                <button id="loginBtn">Вход</button>
+                <button id="registerBtn">Регистрация</button>
+                <button id="logoutBtn" style="display: none;">Выход</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Формы авторизации -->
+        <div id="authForms" class="auth-forms" style="display: none;">
+            <div id="loginForm" class="form">
+                <h3>Вход</h3>
+                <input type="email" id="loginEmail" placeholder="Email">
+                <input type="password" id="loginPassword" placeholder="Пароль">
+                <button onclick="login()">Войти</button>
+                <p class="error" id="loginError"></p>
+            </div>
+
+            <div id="registerForm" class="form" style="display: none;">
+                <h3>Регистрация</h3>
+                <input type="text" id="regName" placeholder="Имя">
+                <input type="email" id="regEmail" placeholder="Email">
+                <input type="password" id="regPassword" placeholder="Пароль">
+                <button onclick="register()">Зарегистрироваться</button>
+                <p class="error" id="registerError"></p>
+            </div>
+            <p><a href="#" onclick="toggleAuthForm()" id="toggleAuthLink">Нет аккаунта? Зарегистрироваться</a></p>
+        </div>
+
+        <!-- Фильтры и поиск -->
+        <div class="filters">
+            <input type="text" id="search" placeholder="Поиск товаров..." oninput="searchProducts()">
+            <div class="price-filter">
+                <input type="number" id="minPrice" placeholder="Мин цена" onchange="filterProducts()">
+                <input type="number" id="maxPrice" placeholder="Макс цена" onchange="filterProducts()">
+            </div>
+            <select id="sort" onchange="filterProducts()">
+                <option value="">Сортировка</option>
+                <option value="price_asc">Цена по возрастанию</option>
+                <option value="price_desc">Цена по убыванию</option>
+                <option value="title_asc">По названию</option>
+            </select>
+        </div>
+
+        <!-- Состояния загрузки и ошибки -->
+        <div id="loading" class="loading" style="display: none;">Загрузка...</div>
+        <div id="error" class="error" style="display: none;"></div>
+
+        <!-- Список товаров -->
+        <div id="products" class="products-grid"></div>
+
+        <!-- Пагинация -->
+        <div class="pagination">
+            <button onclick="changePage(currentPage - 1)" id="prevPage">Назад</button>
+            <span id="pageInfo">Страница 1</span>
+            <button onclick="changePage(currentPage + 1)" id="nextPage">Вперед</button>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
