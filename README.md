@@ -3,6 +3,7 @@
 2. Зайдите в файл `database.py` и замените DATABASE_URL на `postgresql+asyncpg://user:password@host:port/db_name`, где `user` - это имя пользователя, `password` - пароль пользователя БД, `host` - хост, где находится БД (например, localhost), `port` - порт, `db_name` - название БД. Далее заходим в файл `alembic.ini` и заменяем `sqlalchemy_url` на `postgresql+psycopg://user:password@host:port/db_name`
 3. Установите пакеты командой `pip install requirements.txt`
 4. Примените миграцию, которая уже создана командой `alembic upgrade head`
+5. Далее используйте команду `uvicorn main:app --reload` в той же папке, где находится файл `main.py`
 
 # Модели данных
 ## Item
