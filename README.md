@@ -1,3 +1,9 @@
+# Запуск проекта
+1. Убедитесь, что у вас есть доступ к базе данных PostgreSQL
+2. Зайдите в файл `database.py` и замените DATABASE_URL на `postgresql+asyncpg://user:password@host:port/db_name`, где `user` - это имя пользователя, `password` - пароль пользователя БД, `host` - хост, где находится БД (например, localhost), `port` - порт, `db_name` - название БД. Далее заходим в файл `alembic.ini` и заменяем `sqlalchemy_url` на `postgresql+psycopg://user:password@host:port/db_name`
+3. Установите пакеты командой `pip install requirements.txt`
+4. Примените миграцию, которая уже создана командой `alembic upgrade head`
+
 # Модели данных
 ## Item
 ```id - int (первичный ключ)
