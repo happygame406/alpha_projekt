@@ -1,21 +1,24 @@
-from typing import Annotated
+from sqlmodel import SQLModel, create_engine, Session
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+import os
+from dotenv import load_dotenv
 
-from fastapi import Depends
-from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+load_dotenv()
 
-# URL подключения к PostgreSQL (асинхронный)
-DATABASE_URL = "postgresql+asyncpg://postgres:mysecretpassword@localhost:8000/mydatabase"
+# Основная БД
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./marketplace.db")
+engine = create_engine(DATABASE_URL, echo=False)
 
-# Создание асинхронного движка
-engine = create_async_engine(DATABASE_URL, echo=True)
+# Тестовая БД (SQLite в памяти)
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "sqlite:///:memory:")
+test_engine = create_engine(TEST_DATABASE_URL, echo=False)
 
-# Создание фабрики сессий
-AsyncSessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
-
-# Dependency для FastAPI
-async def get_session():
-    async with AsyncSessionLocal() as session:
+# Для обычных запросов
+def get_session():
+    with Session(engine) as session:
         yield session
 
-SessionDep = Annotated[AsyncSession, Depends(get_session)]
+# Для тестов
+def get_test_session():
+    with Session(test_engine) as session:
+        yield session

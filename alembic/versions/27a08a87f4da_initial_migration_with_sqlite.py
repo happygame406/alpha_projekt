@@ -1,19 +1,18 @@
-"""tables created attempt 2
+"""Initial migration with SQLite
 
-Revision ID: 5c91f5d411cf
+Revision ID: 27a08a87f4da
 Revises: 
-Create Date: 2026-03-03 17:29:42.039053
+Create Date: 2026-05-27 12:21:46.680817
 
 """
 from typing import Sequence, Union
 
-import sqlmodel
 from alembic import op
 import sqlalchemy as sa
-
+import sqlmodel
 
 # revision identifiers, used by Alembic.
-revision: str = '5c91f5d411cf'
+revision: str = '27a08a87f4da'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

@@ -1,36 +1,41 @@
-from uuid import UUID, uuid4
-from typing import TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List
+from datetime import datetime
 
-from sqlmodel import Field, SQLModel, Relationship
+# ==================== ТАБЛИЦА В БАЗЕ ====================
+class Item(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str = Field(min_length=5, max_length=100)
+    description: Optional[str] = Field(default=None, max_length=500)
+    price: int = Field(gt=0)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    user_id: int = Field(foreign_key="user.id")
+    owner: Optional["User"] = Relationship(back_populates="items")
 
-if TYPE_CHECKING:
-    from app.models.users import User
+# ==================== Pydantic МОДЕЛИ ДЛЯ API ====================
+class ItemCreate(SQLModel):
+    title: str = Field(min_length=5, max_length=100)
+    description: Optional[str] = None
+    price: int = Field(gt=0)
+    user_id: int
 
-class ItemBase(SQLModel):
-    title: str = Field(min_length=1, max_length=128)
-    description: str | None = Field(default=None, max_length=500)
+class ItemUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[int] = None
 
-class ItemCreate(ItemBase):
-    pass
-
-class ItemOut(ItemBase):
-    id: UUID
-    user_id: UUID
+class ItemOut(SQLModel):
+    id: int
+    title: str
+    description: Optional[str]
+    price: int
+    created_at: datetime
+    user_id: int
 
 class ItemsOut(SQLModel):
-    data: list[ItemOut]
-    count: int
+    items: List[ItemOut]
+    total: int
 
-class ItemUpdate(ItemBase):
-    title: str | None = Field(default=None, min_length=1, max_length=128)
-    user_id: UUID | None = None
-
-class Item(ItemBase, table=True):
-    __tablename__ = 'items'
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    user_id: UUID = Field(
-        foreign_key='users.id', 
-        nullable=False, 
-        ondelete="CASCADE"
-    )
-    user: "User" = Relationship(back_populates='items')
+    class Config:
+        from_attributes = True

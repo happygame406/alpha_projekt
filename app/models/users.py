@@ -1,35 +1,36 @@
-from uuid import UUID, uuid4
-from typing import TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List
+from datetime import datetime
 
-from sqlmodel import Field, SQLModel, Relationship
+# ==================== ТАБЛИЦА В БАЗЕ ====================
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(min_length=3, max_length=50, unique=True, index=True)
+    email: str = Field(max_length=100, unique=True, index=True)
+    hashed_password: str
+    is_active: bool = Field(default=True)
+    
+    items: List["Item"] = Relationship(back_populates="owner", cascade_delete=True)
 
-if TYPE_CHECKING:
-    from app.models.items import Item
+# ==================== Pydantic МОДЕЛИ ДЛЯ API ====================
+class UserCreate(SQLModel):
+    username: str = Field(min_length=3, max_length=50)
+    email: str = Field(max_length=100)
+    password: str
 
-class UserBase(SQLModel):
-    username: str = Field(unique=True, index=True, min_length=1, max_length=64)
-    is_active: bool = True
+class UserOut(SQLModel):
+    id: int
+    username: str
+    email: str
+    is_active: bool
 
-class UserCreate(UserBase):
-    pass
-
-class UserOut(UserBase):
-    id: UUID
-
-# модель для возврата списка пользователей
-class UsersOut(SQLModel):
-    data: list[UserOut]
-    count: int
-
-# модель для частичного обновления данных пользователя
 class UserUpdate(SQLModel):
-    username: str | None = Field(default=None, min_length=1, max_length=64)
-    is_active: bool | None = None
+    username: Optional[str] = None
+    email: Optional[str] = None
 
-class User(UserBase, table=True):
-    __tablename__ = "users"
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    items: list["Item"] = Relationship(
-        back_populates="user",
-        passive_deletes="all"
-    )
+class UsersOut(SQLModel):
+    users: List[UserOut]
+    total: int
+
+    class Config:
+        from_attributes = True
