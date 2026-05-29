@@ -1,5 +1,4 @@
 from sqlmodel import SQLModel, create_engine, Session
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 import os
 from dotenv import load_dotenv
 from typing import Annotated
@@ -9,8 +8,8 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./marketplace.db")
 
-# Синхронный engine (для простоты)
-engine = create_engine(DATABASE_URL, echo=False)
+# Синхронный engine
+engine = create_engine(DATABASE_URL, echo=True)
 
 # Зависимость для FastAPI
 def get_session():
