@@ -86,3 +86,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 5. **Откройте в браузере:**
    - **API документация:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
    - **Фронтенд:** http://127.0.0.1:8000
+---
+## 👥 Команда проекта
+**happygame406** – Backend / Frontend
+**nikizhi** – Backend / Frontend
