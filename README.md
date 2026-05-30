@@ -53,7 +53,7 @@ marketplace/
 
 ```env
 DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/marketplace_db
-SECRET_KEY=your-super-secret-key-change-in-production
+SECRET_KEY=...
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 ```
